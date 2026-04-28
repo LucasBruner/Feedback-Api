@@ -1,0 +1,6 @@
+com\feedback\ecosystem\resource\FeedbackResource.class
+com\feedback\ecosystem\service\FeedbackService.class
+com\feedback\ecosystem\lambda\ReportGenerationHandler.class
+com\feedback\ecosystem\exception\GlobalExceptionHandler.class
+com\feedback\ecosystem\lambda\NotificationHandler.class
+com\feedback\ecosystem\model\Feedback.class
