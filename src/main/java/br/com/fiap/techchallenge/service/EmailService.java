@@ -2,24 +2,20 @@ package br.com.fiap.techchallenge.service;
 
 import br.com.fiap.techchallenge.model.Avaliacao;
 import br.com.fiap.techchallenge.model.RelatorioSemanal;
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Serviço para envio de e-mails via SendGrid
+ * Serviço para envio de e-mails via Resend
  * Gerencia notificações de avaliações críticas e relatórios semanais
  */
 @ApplicationScoped
@@ -28,13 +24,13 @@ public class EmailService {
     private static final Logger LOG = Logger.getLogger(EmailService.class);
     private static final DateTimeFormatter BRAZIL_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    @ConfigProperty(name = "sendgrid.api.key")
-    String sendGridApiKey;
+    @ConfigProperty(name = "resend.api.key")
+    String resendApiKey;
 
-    @ConfigProperty(name = "sendgrid.from.email")
+    @ConfigProperty(name = "resend.from.email")
     String fromEmail;
 
-    @ConfigProperty(name = "sendgrid.admin.email")
+    @ConfigProperty(name = "resend.admin.email")
     String adminEmail;
 
     /**
@@ -76,31 +72,24 @@ public class EmailService {
     }
 
     /**
-     * Método genérico para enviar e-mail via SendGrid
+     * Método genérico para enviar e-mail via Resend
      */
-    private void enviarEmail(String toEmail, String subject, String body) throws IOException {
-        Email from = new Email(fromEmail);
-        Email to = new Email(toEmail);
-        Content content = new Content("text/html", body);
-        Mail mail = new Mail(from, subject, to, content);
+    private void enviarEmail(String toEmail, String subject, String body) throws ResendException {
+        Resend resend = new Resend(resendApiKey);
 
-        SendGrid sg = new SendGrid(sendGridApiKey);
-        Request request = new Request();
+        CreateEmailOptions sendEmailRequest = CreateEmailOptions.builder()
+                .from(fromEmail)
+                .to(toEmail)
+                .subject(subject)
+                .html(body)
+                .build();
 
         try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-
-            Response response = sg.api(request);
-            LOG.infof("SendGrid Response - Status: %d", response.getStatusCode());
-
-            if (response.getStatusCode() >= 400) {
-                LOG.errorf("Erro no SendGrid: %s", response.getBody());
-            }
-        } catch (IOException e) {
+            CreateEmailResponse data = resend.emails().send(sendEmailRequest);
+            LOG.infof("Resend Response - ID: %s", data.getId());
+        } catch (ResendException e) {
             LOG.errorf("Erro ao enviar e-mail: %s", e.getMessage());
-            throw e;
+            throw new ResendException(e.getMessage());
         }
     }
 

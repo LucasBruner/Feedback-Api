@@ -76,11 +76,11 @@ az functionapp config appsettings set \
   --settings APPLICATIONINSIGHTS_CONNECTION_STRING="$APP_INSIGHTS_CONNECTION_STRING"
 
 # 6.2. Configurar variáveis de ambiente necessárias para o app
-echo "Definindo variáveis de ambiente do Function App (ADMIN_EMAIL, FROM_EMAIL, SENDGRID_API_KEY)"
+echo "Definindo variáveis de ambiente do Function App (ADMIN_EMAIL, FROM_EMAIL, RESEND_API_KEY)"
 az functionapp config appsettings set \
   --name $FUNCTION_APP_NAME \
   --resource-group $RESOURCE_GROUP \
-  --settings ADMIN_EMAIL="$ADMIN_EMAIL" FROM_EMAIL="$FROM_EMAIL" SENDGRID_API_KEY="defina_no_portal_ou_gh_secrets"
+  --settings ADMIN_EMAIL="$ADMIN_EMAIL" FROM_EMAIL="$FROM_EMAIL" RESEND_API_KEY="defina_no_portal_ou_gh_secrets"
 
 # 7. Configurar CORS (se for testar de uma UI web)
 az functionapp cors add --name $FUNCTION_APP_NAME -g $RESOURCE_GROUP --allowed-origins "*"
