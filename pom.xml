@@ -62,11 +62,12 @@
             <version>12.4.3</version>
         </dependency>
 
-        <!-- SendGrid para envio de e-mails -->
+        <!-- Resend para envio de e-mails -->
         <dependency>
-            <groupId>com.sendgrid</groupId>
-            <artifactId>sendgrid-java</artifactId>
-            <version>4.10.2</version>
+            <groupId>com.resend</groupId>
+            <artifactId>resend-java</artifactId>
+            <version>4.13.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Azure Application Insights -->
