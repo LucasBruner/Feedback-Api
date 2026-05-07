@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.jboss.logging.Logger;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
+import java.util.IntSummaryStatistics;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -46,22 +46,15 @@ public class RelatorioService {
             return criarRelatorioVazio(inicio, fim);
         }
 
-        // Calcula métricas
-        long total = avaliacoes.size();
-        double media = avaliacoes.stream()
-                .mapToInt(Avaliacao::getNota)
-                .average()
-                .orElse(0.0);
+        // Calcula métricas de forma eficiente em uma única passagem
+        IntSummaryStatistics stats = avaliacoes.stream()
+                .mapToInt(Avaliacao::getNota) // Este método será gerado pelo Lombok na classe Avaliacao
+                .summaryStatistics();
 
-        Integer notaMaisAlta = avaliacoes.stream()
-                .map(Avaliacao::getNota)
-                .max(Comparator.naturalOrder())
-                .orElse(0);
-
-        Integer notaMaisBaixa = avaliacoes.stream()
-                .map(Avaliacao::getNota)
-                .min(Comparator.naturalOrder())
-                .orElse(0);
+        long total = stats.getCount();
+        double media = stats.getAverage();
+        Integer notaMaisAlta = stats.getMax();
+        Integer notaMaisBaixa = stats.getMin();
 
         // Contagem por urgência
         Map<String, Long> contagemPorUrgencia = avaliacoes.stream()
@@ -122,6 +115,7 @@ public class RelatorioService {
                 .contagemPorUrgencia(Map.of())
                 .palavrasRecorrentes(Map.of())
                 .frasesRecorrentes(Map.of())
+                .avaliacoesPorDia(Map.of())
                 .build();
 
         relatorio.inicializar();
