@@ -14,15 +14,18 @@ Existem dois modos de execução local:
 
 ## Pré-requisitos
 
-| Ferramenta | Versão mínima | Download |
+| Ferramenta | Versão mínima | Download / Instruções |
 |---|---|---|
 | Java (JDK) | 21 | https://adoptium.net |
 | Maven | 3.9+ | https://maven.apache.org |
 | Azure Functions Core Tools | 4.x | `npm install -g azure-functions-core-tools@4` |
 | Azurite (emulador Azure Storage) | — | `npm install -g azurite` |
 | Node.js | 18+ | https://nodejs.org (necessário para os dois itens acima) |
+| Conta Resend | — | Crie uma conta gratuita em [https://resend.com/signup](https://resend.com/signup) |
 
-Verifique as instalações:
+Após criar a conta no Resend, você precisará de uma **API Key** para configurar o envio de e-mails. Essa chave deve ser inserida na variável `RESEND_API_KEY` no arquivo `local.settings.json`.
+
+Verifique as instalações das ferramentas de linha de comando:
 
 ```bash
 java -version
