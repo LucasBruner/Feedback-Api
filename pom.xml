@@ -5,25 +5,25 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.fiap.techchallenge</groupId>
-    <artifactId>feedback-platform</artifactId>
+    <artifactId>feedback-api</artifactId>
     <version>1.0.0</version>
 
     <properties>
-        <compiler-plugin.version>3.13.0</compiler-plugin.version>
+        <compiler-plugin.version>3.14.0</compiler-plugin.version>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.6.4</quarkus.platform.version>
-        <azure.functions.maven.plugin.version>1.41.0</azure.functions.maven.plugin.version>
-        <azure.functions.java.library.version>3.0.0</azure.functions.java.library.version>
+        <quarkus.platform.version>3.27.1</quarkus.platform.version>
+        <azure.functions.maven.plugin.version>1.40.0</azure.functions.maven.plugin.version>
+        <azure.functions.java.library.version>3.2.0</azure.functions.java.library.version>
+        <lombok.version>1.18.46</lombok.version>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-        <functionAppName>feedback-platform-${maven.build.timestamp}</functionAppName>
+        <functionAppName>feedback-api-${maven.build.timestamp}</functionAppName>
         <functionAppRegion>eastus</functionAppRegion>
-        <functionResourceGroup>rg-feedback-platform</functionResourceGroup>
+        <functionResourceGroup>rg-feedback-api</functionResourceGroup>
     </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -33,52 +33,39 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.azure</groupId>
+                <artifactId>azure-sdk-bom</artifactId>
+                <version>1.2.32</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
     <dependencies>
-        <!-- Quarkus Azure Functions -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-azure-functions</artifactId>
         </dependency>
-
-        <!-- Azure Functions Java Library -->
         <dependency>
             <groupId>com.microsoft.azure.functions</groupId>
             <artifactId>azure-functions-java-library</artifactId>
             <version>${azure.functions.java.library.version}</version>
         </dependency>
-
-        <!--&lt;!&ndash; Quarkus REST &ndash;&gt;
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
-        </dependency>-->
-
-        <!-- Azure Storage Tables -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-data-tables</artifactId>
-            <version>12.4.3</version>
         </dependency>
-
-        <!-- Resend para envio de e-mails -->
         <dependency>
             <groupId>com.resend</groupId>
             <artifactId>resend-java</artifactId>
             <version>4.13.0</version>
-            <scope>compile</scope>
         </dependency>
-
-        <!-- Azure Application Insights -->
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>applicationinsights-core</artifactId>
-            <version>3.4.19</version>
+            <version>3.6.2</version>
         </dependency>
-
-        <!-- Validação -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-validator</artifactId>
@@ -86,7 +73,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.44</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -118,7 +105,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -132,41 +118,40 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.44</version>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.5.2</version>
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
-           <plugin>
-             <groupId>com.microsoft.azure</groupId>
-             <artifactId>azure-functions-maven-plugin</artifactId>
-             <version>${azure.functions.maven.plugin.version}</version>
-             <configuration>
-                 <appName>${functionAppName}</appName>
-                 <skipInstallExtensions>true</skipInstallExtensions>
-                 <runtime>
-                     <os>linux</os>
-                     <javaVersion>21</javaVersion>
-                 </runtime>
-             </configuration>
-             <executions>
-                 <execution>
-                     <goals>
-                         <goal>package</goal>
-                     </goals>
-                 </execution>
-             </executions>
-         </plugin>
+            <plugin>
+                <groupId>com.microsoft.azure</groupId>
+                <artifactId>azure-functions-maven-plugin</artifactId>
+                <version>${azure.functions.maven.plugin.version}</version>
+                <configuration>
+                    <appName>${functionAppName}</appName>
+                    <skipInstallExtensions>true</skipInstallExtensions>
+                    <runtime>
+                        <os>linux</os>
+                        <javaVersion>21</javaVersion>
+                    </runtime>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
