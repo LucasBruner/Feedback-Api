@@ -20,9 +20,9 @@
         <azure.functions.java.library.version>3.2.0</azure.functions.java.library.version>
         <lombok.version>1.18.46</lombok.version>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-        <functionAppName>feedback-api-${maven.build.timestamp}</functionAppName>
+        <functionAppName>feedback-platform-${maven.build.timestamp}</functionAppName>
         <functionAppRegion>eastus</functionAppRegion>
-        <functionResourceGroup>rg-feedback-api</functionResourceGroup>
+        <functionResourceGroup>rg-feedback-platform</functionResourceGroup>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -68,6 +68,14 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-validator</artifactId>
         </dependency>
         <dependency>
@@ -84,6 +92,16 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

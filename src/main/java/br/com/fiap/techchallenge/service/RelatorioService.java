@@ -37,7 +37,7 @@ public class RelatorioService {
         }
 
         IntSummaryStatistics stats = avaliacoes.stream()
-                .mapToInt(Avaliacao::getNota) // Este método será gerado pelo Lombok na classe Avaliacao
+                .mapToInt(Avaliacao::getNota)
                 .summaryStatistics();
 
         long total = stats.getCount();

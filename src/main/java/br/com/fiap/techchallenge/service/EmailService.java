@@ -11,6 +11,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -175,7 +176,7 @@ public class EmailService {
                 .map(f -> "<li>\"" + f + "\"</li>")
                 .collect(Collectors.joining());
 
-        return String.format("""
+        return String.format(new Locale("pt", "BR"), """
         <html>
         <head>
             <style>

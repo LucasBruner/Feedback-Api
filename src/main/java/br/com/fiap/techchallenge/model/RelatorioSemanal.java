@@ -12,10 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Modelo de dados para Relatório Semanal
- * Contém estatísticas agregadas das avaliações
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -59,19 +55,17 @@ public class RelatorioSemanal {
     private Map<String, Long> avaliacoesPorDia;
 
     public Map<String, Long> getAvaliacoesPorUrgencia() {
-        return this.contagemPorUrgencia; // Mapeia para o campo existente
+        return this.contagemPorUrgencia;
     }
 
     public List<String> getPalavrasMaisRecorrentes() {
-        return new ArrayList<>(this.palavrasRecorrentes.keySet()); // Converte o Map para List
+        return new ArrayList<>(this.palavrasRecorrentes.keySet());
     }
 
     public List<String> getFrasesMaisRecorrentes() {
-        return new ArrayList<>(this.frasesRecorrentes.keySet()); // Converte o Map para List
+        return new ArrayList<>(this.frasesRecorrentes.keySet());
     }
-    /**
-     * Inicializa o relatório com ID único e data de geração
-     */
+
     public void inicializar() {
         if (this.id == null) {
             this.id = UUID.randomUUID().toString();
