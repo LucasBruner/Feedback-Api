@@ -16,10 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Repositório para operações no Azure Storage Tables
- * Gerencia persistência de avaliações e relatórios
- */
 @ApplicationScoped
 public class StorageTableRepository {
 
@@ -31,9 +27,6 @@ public class StorageTableRepository {
 
     private volatile TableServiceClient tableServiceClient;
 
-    /**
-     * Inicializa a conexão com o Azure Storage Tables
-     */
     private void initialize() {
         if (tableServiceClient == null) {
             synchronized (this) {
@@ -55,15 +48,11 @@ public class StorageTableRepository {
         }
     }
 
-    /**
-     * Salva uma avaliação no Azure Storage Tables
-     */
     public void salvarAvaliacao(Avaliacao avaliacao) {
         try {
             initialize();
             LOG.infof("Salvando avaliação: %s", avaliacao.getId());
 
-            // Cria a tabela se não existir
             try {
                 tableServiceClient.createTableIfNotExists(TABLE_AVALIACOES);
             } catch (Exception e) {
@@ -85,9 +74,6 @@ public class StorageTableRepository {
         }
     }
 
-    /**
-     * Busca avaliações em um período específico
-     */
     public List<Avaliacao> buscarAvaliacoesPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
         try {
             initialize();
@@ -114,16 +100,12 @@ public class StorageTableRepository {
         }
     }
 
-    /**
-     * Salva um relatório semanal no Azure Storage Tables
-     */
     public void salvarRelatorio(RelatorioSemanal relatorio) {
         try {
             initialize();
             LOG.infof("Salvando relatório: %s", relatorio.getId());
 
 
-            // Cria a tabela se não existir
             try {
                 tableServiceClient.createTableIfNotExists(TABLE_RELATORIOS);
             } catch (Exception e) {
@@ -149,14 +131,12 @@ public class StorageTableRepository {
                 entity.addProperty("avaliacoesPorDia", "{" + diasJson + "}");
             }
 
-            // Adiciona contagem por urgência como propriedades separadas
             if (relatorio.getContagemPorUrgencia() != null) {
                 relatorio.getContagemPorUrgencia().forEach((nivel, count) -> {
                     entity.addProperty("contagem_" + nivel, count);
                 });
             }
 
-            // Adiciona palavras recorrentes (serializa como JSON string)
             if (relatorio.getPalavrasRecorrentes() != null && !relatorio.getPalavrasRecorrentes().isEmpty()) {
                 StringBuilder palavrasJson = new StringBuilder();
                 for (java.util.Map.Entry<String, Long> entry : relatorio.getPalavrasRecorrentes().entrySet()) {
@@ -168,7 +148,6 @@ public class StorageTableRepository {
                 entity.addProperty("palavrasRecorrentes", "{" + palavrasJson + "}");
             }
 
-            // Adiciona frases recorrentes (serializa como JSON string)
             if (relatorio.getFrasesRecorrentes() != null && !relatorio.getFrasesRecorrentes().isEmpty()) {
                 StringBuilder frasesJson = new StringBuilder();
                 for (java.util.Map.Entry<String, Long> entry : relatorio.getFrasesRecorrentes().entrySet()) {
@@ -188,9 +167,6 @@ public class StorageTableRepository {
         }
     }
 
-    /**
-     * Converte TableEntity para Avaliacao
-     */
     private Avaliacao fromTableEntity(TableEntity entity) {
         String descricao = (String) entity.getProperty("descricao");
         Integer nota = (Integer) entity.getProperty("nota");
@@ -227,10 +203,6 @@ public class StorageTableRepository {
                 .build();
     }
 
-    /**
-     * Fecha a conexão com o Azure Storage Tables
-     */
     public void close() {
-        // TableServiceClient não precisa de close explícito
     }
 }

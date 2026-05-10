@@ -13,10 +13,6 @@ import java.util.IntSummaryStatistics;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Serviço para geração de relatórios
- * Calcula estatísticas e métricas das avaliações
- */
 @ApplicationScoped
 @RequiredArgsConstructor
 public class RelatorioService {
@@ -26,29 +22,22 @@ public class RelatorioService {
     private final StorageTableRepository repository;
     private final AnaliseTextoService analiseTextoService;
 
-    /**
-     * Gera relatório semanal com estatísticas das avaliações
-     */
     public RelatorioSemanal gerarRelatorioSemanal() {
         LOG.info("Iniciando geração de relatório semanal");
 
-        // Define o período (últimos 7 dias)
         LocalDateTime fim = LocalDateTime.now();
         LocalDateTime inicio = fim.minusDays(7);
 
-        // Busca avaliações do período
         List<Avaliacao> avaliacoes = repository.buscarAvaliacoesPorPeriodo(inicio, fim);
         LOG.infof("Total de avaliações no período: %d", avaliacoes.size());
 
-        // Se não houver avaliações, retorna relatório vazio
         if (avaliacoes.isEmpty()) {
             LOG.warn("Nenhuma avaliação encontrada no período");
             return criarRelatorioVazio(inicio, fim);
         }
 
-        // Calcula métricas de forma eficiente em uma única passagem
         IntSummaryStatistics stats = avaliacoes.stream()
-                .mapToInt(Avaliacao::getNota) // Este método será gerado pelo Lombok na classe Avaliacao
+                .mapToInt(Avaliacao::getNota)
                 .summaryStatistics();
 
         long total = stats.getCount();
@@ -56,14 +45,12 @@ public class RelatorioService {
         Integer notaMaisAlta = stats.getMax();
         Integer notaMaisBaixa = stats.getMin();
 
-        // Contagem por urgência
         Map<String, Long> contagemPorUrgencia = avaliacoes.stream()
                 .collect(Collectors.groupingBy(
                         a -> a.getUrgencia().toString(),
                         Collectors.counting()
                 ));
 
-        // Análise de comentários recorrentes
         List<String> descricoes = avaliacoes.stream()
                 .map(Avaliacao::getDescricao)
                 .filter(desc -> desc != null && !desc.trim().isEmpty())
@@ -81,7 +68,6 @@ public class RelatorioService {
         LOG.infof("Análise de texto concluída - %d palavras e %d frases recorrentes identificadas",
                 palavrasRecorrentes.size(), frasesRecorrentes.size());
 
-        // Cria relatório
         RelatorioSemanal relatorio = RelatorioSemanal.builder()
                 .periodoInicio(inicio)
                 .periodoFim(fim)
@@ -101,9 +87,6 @@ public class RelatorioService {
         return relatorio;
     }
 
-    /**
-     * Cria relatório vazio para períodos sem avaliações
-     */
     private RelatorioSemanal criarRelatorioVazio(LocalDateTime inicio, LocalDateTime fim) {
         RelatorioSemanal relatorio = RelatorioSemanal.builder()
                 .periodoInicio(inicio)

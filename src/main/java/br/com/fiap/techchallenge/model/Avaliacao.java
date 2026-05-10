@@ -13,10 +13,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Modelo de dados para Avaliação
- * Representa uma avaliação de feedback com descrição e nota
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -42,9 +38,6 @@ public class Avaliacao {
     @JsonProperty("dataHora")
     private LocalDateTime dataHora;
 
-    /**
-     * Inicializa a avaliação com ID único e data/hora atual
-     */
     public void inicializar() {
         if (this.id == null) {
             this.id = UUID.randomUUID().toString();
@@ -54,12 +47,6 @@ public class Avaliacao {
         }
     }
 
-    /**
-     * Calcula o nível de urgência baseado na nota
-     * Crítico: nota <= 3
-     * Alto: nota 4-6
-     * Normal: nota >= 7
-     */
     public void calcularUrgencia(int threshold) {
         if (nota <= threshold) {
             this.urgencia = NivelUrgencia.CRITICO;

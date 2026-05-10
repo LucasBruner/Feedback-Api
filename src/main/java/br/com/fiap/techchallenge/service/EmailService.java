@@ -11,13 +11,10 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Serviço para envio de e-mails via Resend
- * Gerencia notificações de avaliações críticas e relatórios semanais
- */
 @ApplicationScoped
 public class EmailService {
 
@@ -33,9 +30,6 @@ public class EmailService {
     @ConfigProperty(name = "resend.admin.email")
     String adminEmail;
 
-    /**
-     * Envia notificação de avaliação crítica para administradores
-     */
     public void enviarNotificacaoCritica(Avaliacao avaliacao) {
         try {
             LOG.infof("Enviando notificação crítica para: %s", adminEmail);
@@ -48,13 +42,9 @@ public class EmailService {
             LOG.info("Notificação crítica enviada com sucesso");
         } catch (Exception e) {
             LOG.errorf("Erro ao enviar notificação crítica: %s", e.getMessage());
-            // Não lança exceção para não bloquear o fluxo principal
         }
     }
 
-    /**
-     * Envia relatório semanal para administradores
-     */
     public void enviarRelatorioSemanal(RelatorioSemanal relatorio) {
         try {
             LOG.infof("Enviando relatório semanal para: %s", adminEmail);
@@ -67,16 +57,11 @@ public class EmailService {
             LOG.info("Relatório semanal enviado com sucesso");
         } catch (Exception e) {
             LOG.errorf("Erro ao enviar relatório semanal: %s", e.getMessage());
-            // Não lança exceção para não bloquear o fluxo principal
         }
     }
 
-    /**
-     * Método genérico para enviar e-mail via Resend
-     */
     private void enviarEmail(String toEmail, String subject, String body) throws ResendException {
         Resend resend = new Resend(resendApiKey);
-
         CreateEmailOptions sendEmailRequest = CreateEmailOptions.builder()
                 .from(fromEmail)
                 .to(toEmail)
@@ -93,9 +78,6 @@ public class EmailService {
         }
     }
 
-    /**
-     * Constrói o corpo do e-mail para avaliação crítica
-     */
     private String construirEmailCritico(Avaliacao avaliacao) {
         String dataFormatada = avaliacao.getDataHora().format(BRAZIL_FORMATTER);
         return String.format("""
@@ -156,26 +138,19 @@ public class EmailService {
         );
     }
 
-    /**
-     * Constrói o corpo do e-mail para relatório semanal
-     */
     public String construirEmailRelatorio(RelatorioSemanal relatorio) {
-        // 1. Formatadores para datas brasileiras
         DateTimeFormatter dataHoraFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         DateTimeFormatter apenasDataFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        // 2. Preparação das datas legíveis
         String dataInicioFormatada = relatorio.getPeriodoInicio().format(apenasDataFmt);
         String dataFimFormatada = relatorio.getPeriodoFim().format(apenasDataFmt);
         String dataGeracaoFormatada = relatorio.getDataGeracao().format(dataHoraFmt);
 
-        // 3. Construção da Tabela de "Avaliações por Dia" (Requisito do PDF)
         StringBuilder distribuicaoDiariaHtml = new StringBuilder();
         if (relatorio.getAvaliacoesPorDia() != null && !relatorio.getAvaliacoesPorDia().isEmpty()) {
             distribuicaoDiariaHtml.append("<table style='width:100%; border-collapse: collapse; margin-bottom: 20px;'>");
             distribuicaoDiariaHtml.append("<tr style='background-color: #f2f2f2;'><th style='padding: 8px; border: 1px solid #ddd; text-align: left;'>Data</th><th style='padding: 8px; border: 1px solid #ddd; text-align: center;'>Quantidade</th></tr>");
 
-            // Ordena por data (chave) para o relatório ficar cronológico
             relatorio.getAvaliacoesPorDia().entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
                     .forEach(entry -> {
@@ -189,7 +164,6 @@ public class EmailService {
             distribuicaoDiariaHtml.append("<p>Nenhuma avaliação registrada no período.</p>");
         }
 
-        // 4. Preparação de Urgências e Texto (Mantendo a lógica que você já possui)
         String urgencias = relatorio.getAvaliacoesPorUrgencia().entrySet().stream()
                 .map(e -> String.format("<li><strong>%s:</strong> %d</li>", e.getKey(), e.getValue()))
                 .collect(Collectors.joining());
@@ -202,8 +176,7 @@ public class EmailService {
                 .map(f -> "<li>\"" + f + "\"</li>")
                 .collect(Collectors.joining());
 
-        // 5. Template Final Formatado
-        return String.format("""
+        return String.format(new Locale("pt", "BR"), """
         <html>
         <head>
             <style>
@@ -220,7 +193,6 @@ public class EmailService {
                 <div class="header">
                     <h1>Relatório Semanal de Feedbacks</h1>
                 </div>
-                
                 <div class="section">
                     <p><strong>Período:</strong> %s até %s</p>
                     <p><strong>Gerado em:</strong> %s</p>
@@ -253,7 +225,7 @@ public class EmailService {
                     <p><strong>Frases Comuns:</strong></p>
                     <ul>%s</ul>
                 </div>
-                
+
                 <div style="font-size: 12px; color: #777; margin-top: 30px; text-align: center;">
                     Sistema Automático de Feedbacks - Tech Challenge Fase 4
                 </div>
@@ -261,14 +233,14 @@ public class EmailService {
         </body>
         </html>
         """,
-                dataInicioFormatada,     // %s
-                dataFimFormatada,        // %s
-                dataGeracaoFormatada,    // %s
+                dataInicioFormatada,
+                dataFimFormatada,
+                dataGeracaoFormatada,
                 relatorio.getTotalAvaliacoes(),
                 relatorio.getMediaNotas(),
                 relatorio.getNotaMaisAlta(),
                 relatorio.getNotaMaisBaixa(),
-                distribuicaoDiariaHtml.toString(), // A nova tabela de avaliações por dia
+                distribuicaoDiariaHtml.toString(),
                 urgencias,
                 palavrasHtml,
                 frasesHtml

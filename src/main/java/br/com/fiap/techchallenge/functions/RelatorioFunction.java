@@ -11,17 +11,6 @@ import com.microsoft.azure.functions.annotation.TimerTrigger;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.logging.Logger;
 
-/**
- * Azure Function com Timer Trigger para geração de relatório semanal
- * Executado toda segunda-feira às 9h (0 0 9 * * MON)
- * <p>
- * Responsabilidades:
- * - Buscar avaliações dos últimos 7 dias
- * - Calcular métricas (média, contagens por urgência)
- * - Persistir relatório no Azure Storage Tables
- * - Enviar e-mail resumo para administradores
- * - Registrar telemetria
- */
 @ApplicationScoped
 public class RelatorioFunction {
 
@@ -30,7 +19,6 @@ public class RelatorioFunction {
     private final RelatorioService relatorioService;
     private final StorageTableRepository repository;
     private final EmailService emailService;
-    //private final TelemetryClient telemetryClient = new TelemetryClient();
 
     public RelatorioFunction(RelatorioService relatorioService, StorageTableRepository repository, EmailService emailService) {
         this.relatorioService = relatorioService;
@@ -38,12 +26,6 @@ public class RelatorioFunction {
         this.emailService = emailService;
     }
 
-    /**
-     * Timer Trigger: Executa toda segunda-feira às 9h
-     * Cron expression: 0 0 9 * * MON
-     * <p>
-     * Formato: {segundo} {minuto} {hora} {dia} {mês} {dia-da-semana}
-     */
     @FunctionName("RelatorioSemanalHandler")
     public void run(
             @TimerTrigger(
@@ -59,22 +41,18 @@ public class RelatorioFunction {
         LOG.infof("Timer Info: %s", timerInfo);
 
         try {
-            // 1. Gera relatório com métricas
             RelatorioSemanal relatorio = relatorioService.gerarRelatorioSemanal();
             LOG.infof("Relatório gerado - ID: %s", relatorio.getId());
             LOG.infof("Total avaliações: %d, Média: %.2f",
                     relatorio.getTotalAvaliacoes(),
                     relatorio.getMediaNotas());
 
-            // 2. Persiste relatório no Azure Storage Tables
             repository.salvarRelatorio(relatorio);
             LOG.info("Relatório persistido com sucesso");
 
-            // 3. Envia e-mail resumo para administradores
             emailService.enviarRelatorioSemanal(relatorio);
             LOG.info("E-mail de relatório enviado");
 
-            // 4. Registra telemetria
             telemetryClient.trackEvent("RelatorioSemanalGerado");
             telemetryClient.trackMetric("TotalAvaliacoesSemanal", relatorio.getTotalAvaliacoes());
             telemetryClient.trackMetric("MediaNotasSemanal", relatorio.getMediaNotas());
