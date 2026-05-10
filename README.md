@@ -107,6 +107,8 @@ Para que os e-mails funcionem (alertas críticos e relatório semanal):
    - `FROM_EMAIL` (o remetente verificado)
    - `ADMIN_EMAIL` (quem receberá os alertas e relatórios)
 
+> **Importante:** Para que os e-mails sejam efetivamente enviados, o Resend exige que o domínio do remetente (`FROM_EMAIL`) seja validado. Como alternativa para testes rápidos, você pode usar o e-mail padrão `onboarding@resend.dev` como remetente, que já é verificado pela plataforma.
+
 ---
 
 ### 4. Configurar App Settings no Azure Function App
