@@ -28,7 +28,7 @@ jobs:
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
       - name: Deploy to Azure Functions
-        uses: Azure/functions-action@v2
+        uses: Azure/functions-action@v1
         with:
           app-name: func-tech-challenge-897be015
           package: 'target/azure-functions/feedback-api-*'
