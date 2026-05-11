@@ -89,9 +89,11 @@ public class AvaliacaoFunction {
 
             LOG.info("=== Avaliação processada com sucesso ===");
 
+            String avaliacaoJson = objectMapper.writeValueAsString(avaliacao);
+
             return request.createResponseBuilder(HttpStatus.CREATED)
                     .header("Content-Type", "application/json")
-                    .body(avaliacao)
+                    .body(avaliacaoJson) // passa String, não o objeto
                     .build();
 
         } catch (Exception e) {
