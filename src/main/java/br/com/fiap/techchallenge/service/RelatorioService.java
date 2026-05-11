@@ -2,7 +2,7 @@ package br.com.fiap.techchallenge.service;
 
 import br.com.fiap.techchallenge.model.Avaliacao;
 import br.com.fiap.techchallenge.model.RelatorioSemanal;
-import br.com.fiap.techchallenge.repository.StorageTableRepository;
+import br.com.fiap.techchallenge.repository.AvaliacaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
 import org.jboss.logging.Logger;
@@ -19,7 +19,7 @@ public class RelatorioService {
 
     private static final Logger LOG = Logger.getLogger(RelatorioService.class);
 
-    private final StorageTableRepository repository;
+    private final AvaliacaoRepository avaliacaoRepository;
     private final AnaliseTextoService analiseTextoService;
 
     public RelatorioSemanal gerarRelatorioSemanal() {
@@ -28,7 +28,7 @@ public class RelatorioService {
         LocalDateTime fim = LocalDateTime.now();
         LocalDateTime inicio = fim.minusDays(7);
 
-        List<Avaliacao> avaliacoes = repository.buscarAvaliacoesPorPeriodo(inicio, fim);
+        List<Avaliacao> avaliacoes = avaliacaoRepository.buscarPorPeriodo(inicio, fim);
         LOG.infof("Total de avaliações no período: %d", avaliacoes.size());
 
         if (avaliacoes.isEmpty()) {

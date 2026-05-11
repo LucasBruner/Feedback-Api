@@ -2,7 +2,7 @@ package br.com.fiap.techchallenge.functions;
 
 import br.com.fiap.techchallenge.exception.GerarRelatorioException;
 import br.com.fiap.techchallenge.model.RelatorioSemanal;
-import br.com.fiap.techchallenge.repository.StorageTableRepository;
+import br.com.fiap.techchallenge.repository.RelatorioSemanalRepository;
 import br.com.fiap.techchallenge.service.EmailService;
 import br.com.fiap.techchallenge.service.RelatorioService;
 import com.microsoft.applicationinsights.TelemetryClient;
@@ -18,12 +18,12 @@ public class RelatorioFunction {
     private static final Logger LOG = Logger.getLogger(RelatorioFunction.class);
 
     private final RelatorioService relatorioService;
-    private final StorageTableRepository repository;
+    private final RelatorioSemanalRepository relatorioSemanalRepository;
     private final EmailService emailService;
 
-    public RelatorioFunction(RelatorioService relatorioService, StorageTableRepository repository, EmailService emailService) {
+    public RelatorioFunction(RelatorioService relatorioService, RelatorioSemanalRepository relatorioSemanalRepository, EmailService emailService) {
         this.relatorioService = relatorioService;
-        this.repository = repository;
+        this.relatorioSemanalRepository = relatorioSemanalRepository;
         this.emailService = emailService;
     }
 
@@ -48,7 +48,7 @@ public class RelatorioFunction {
                     relatorio.getTotalAvaliacoes(),
                     relatorio.getMediaNotas());
 
-            repository.salvarRelatorio(relatorio);
+            relatorioSemanalRepository.salvar(relatorio);
             LOG.info("Relatório persistido com sucesso");
 
             emailService.enviarRelatorioSemanal(relatorio);

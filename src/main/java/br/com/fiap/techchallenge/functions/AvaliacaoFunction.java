@@ -1,7 +1,7 @@
 package br.com.fiap.techchallenge.functions;
 
 import br.com.fiap.techchallenge.model.Avaliacao;
-import br.com.fiap.techchallenge.repository.StorageTableRepository;
+import br.com.fiap.techchallenge.repository.AvaliacaoRepository;
 import br.com.fiap.techchallenge.service.EmailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -25,13 +25,13 @@ public class AvaliacaoFunction {
     private static final Logger LOG = Logger.getLogger(AvaliacaoFunction.class);
     private static final int URGENCIA_CRITICA_THRESHOLD = 3;
 
-    private final StorageTableRepository repository;
+    private final AvaliacaoRepository avaliacaoRepository;
     private final EmailService emailService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
 
-    public AvaliacaoFunction(StorageTableRepository repository, EmailService emailService, Validator validator) {
-        this.repository = repository;
+    public AvaliacaoFunction(AvaliacaoRepository avaliacaoRepository, EmailService emailService, Validator validator) {
+        this.avaliacaoRepository = avaliacaoRepository;
         this.emailService = emailService;
         this.validator = validator;
         this.objectMapper = new ObjectMapper();
@@ -75,7 +75,7 @@ public class AvaliacaoFunction {
             avaliacao.calcularUrgencia(URGENCIA_CRITICA_THRESHOLD);
             LOG.infof("Urgência calculada: %s", avaliacao.getUrgencia());
 
-            repository.salvarAvaliacao(avaliacao);
+            avaliacaoRepository.salvar(avaliacao);
             LOG.info("Avaliação persistida com sucesso");
 
             if (avaliacao.getUrgencia() == Avaliacao.NivelUrgencia.CRITICO) {
