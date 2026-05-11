@@ -27,5 +27,5 @@ jobs:
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
-          app-name: feedback-api
+          app-name: func-tech-challenge-897be015
           package: target/azure-functions/feedback-api-1.0.0
