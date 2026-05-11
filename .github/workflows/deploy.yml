@@ -19,13 +19,8 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      - name: Check creds secret
-        run: |
-              if [ -z '${{ secrets.AZURE_CREDENTIALS }}' ]; then
-                echo "SECRET ESTÁ VAZIA"
-              else
-                echo "Secret tem conteúdo"
-              fi
+      - name: List build output
+        run: ls -la target/azure-functions/
 
       - name: 'Azure Login'
         uses: azure/login@v2
@@ -36,4 +31,4 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: func-tech-challenge-897be015
-          package: 'target/azure-functions/feedback-api-*'
+          package: 'target/azure-functions/*'
