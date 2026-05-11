@@ -19,6 +19,14 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
+      - name: Check creds secret
+        run: |
+              if [ -z '${{ secrets.AZURE_CREDENTIALS }}' ]; then
+                echo "SECRET ESTÁ VAZIA"
+              else
+                echo "Secret tem conteúdo"
+              fi
+
       - name: 'Azure Login'
         uses: azure/login@v2
         with:
