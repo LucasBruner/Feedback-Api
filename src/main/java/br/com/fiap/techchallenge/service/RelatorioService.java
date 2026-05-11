@@ -54,7 +54,7 @@ public class RelatorioService {
         List<String> descricoes = avaliacoes.stream()
                 .map(Avaliacao::getDescricao)
                 .filter(desc -> desc != null && !desc.trim().isEmpty())
-                .collect(Collectors.toList());
+                .toList();
 
         Map<String, Long> avaliacoesPorDia = avaliacoes.stream()
                 .collect(Collectors.groupingBy(

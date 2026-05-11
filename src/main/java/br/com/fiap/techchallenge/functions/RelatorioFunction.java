@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.functions;
 
+import br.com.fiap.techchallenge.exception.GerarRelatorioException;
 import br.com.fiap.techchallenge.model.RelatorioSemanal;
 import br.com.fiap.techchallenge.repository.StorageTableRepository;
 import br.com.fiap.techchallenge.service.EmailService;
@@ -62,7 +63,7 @@ public class RelatorioFunction {
         } catch (Exception e) {
             LOG.errorf("Erro ao gerar relatório semanal: %s", e.getMessage());
             telemetryClient.trackException(e);
-            throw new RuntimeException("Falha na geração do relatório semanal", e);
+            throw new GerarRelatorioException("Falha na geração do relatório semanal", e);
         }
     }
 }
