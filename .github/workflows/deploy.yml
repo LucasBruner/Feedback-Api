@@ -19,9 +19,13 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
+      - name: 'Azure Login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
           app-name: feedback-api
           package: target/azure-functions/feedback-api-1.0.0
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
