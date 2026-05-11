@@ -9,15 +9,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import sun.reflect.ReflectionFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,15 +30,17 @@ class StorageTableRepositoryTest {
     @Mock
     private TableClient tableClient;
 
-    @InjectMocks
     private StorageTableRepository repository;
 
     @BeforeEach
     void setUp() throws Exception {
-        // Mock the environment variable
-        System.setProperty("AZURE_STORAGE_CONNECTION_STRING", "UseDevelopmentStorage=true");
+        // Create instance without calling constructor to avoid dependency on environment variables
+        ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
+        Constructor<?> objDef = Object.class.getDeclaredConstructor();
+        Constructor<?> intConstr = rf.newConstructorForSerialization(StorageTableRepository.class, objDef);
+        repository = (StorageTableRepository) intConstr.newInstance();
 
-        // Inject the mocked TableServiceClient
+        // Inject the mocked TableServiceClient using reflection
         Field field = StorageTableRepository.class.getDeclaredField("tableServiceClient");
         field.setAccessible(true);
         field.set(repository, tableServiceClient);
