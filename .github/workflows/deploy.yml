@@ -27,8 +27,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Get package path
+        id: pkg
+        run: echo "path=$(ls -d target/azure-functions/feedback-api-*)" >> $GITHUB_OUTPUT
+
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
           app-name: func-tech-challenge-897be015
-          package: 'target/azure-functions/*'
+          package: ${{ steps.pkg.outputs.path }}
