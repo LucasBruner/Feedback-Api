@@ -20,12 +20,15 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: 'Azure Login'
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
       - name: Deploy to Azure Functions
-        uses: Azure/functions-action@v1
+        uses: Azure/functions-action@v2
         with:
           app-name: func-tech-challenge-897be015
-          package: target/azure-functions/feedback-api-1.0.0
+          package: 'target/azure-functions/feedback-api-*'
