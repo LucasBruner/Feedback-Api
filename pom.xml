@@ -17,7 +17,6 @@
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.27.1</quarkus.platform.version>
         <azure.functions.maven.plugin.version>1.40.0</azure.functions.maven.plugin.version>
-        <azure.functions.java.library.version>3.2.0</azure.functions.java.library.version>
         <lombok.version>1.18.46</lombok.version>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <functionAppName>feedback-platform-${maven.build.timestamp}</functionAppName>
@@ -50,7 +49,6 @@
         <dependency>
             <groupId>com.microsoft.azure.functions</groupId>
             <artifactId>azure-functions-java-library</artifactId>
-            <version>${azure.functions.java.library.version}</version>
         </dependency>
         <dependency>
             <groupId>com.azure</groupId>
