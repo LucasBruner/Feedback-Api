@@ -38,8 +38,8 @@ public class AnaliseTextoService {
                 .filter(desc -> !desc.trim().isEmpty())
                 .flatMap(desc -> extrairPalavras(desc).stream())
                 .filter(palavra -> palavra.length() >= MIN_PALAVRA_LENGTH)
-                .filter(palavra -> !STOP_WORDS.contains(palavra.toLowerCase()))
                 .map(String::toLowerCase)
+                .filter(lowerCase -> !STOP_WORDS.contains(lowerCase))
                 .collect(Collectors.groupingBy(
                         palavra -> palavra,
                         Collectors.counting()
@@ -104,7 +104,7 @@ public class AnaliseTextoService {
 
         return Arrays.stream(textoLimpo.split("\\s+"))
                 .filter(palavra -> !palavra.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<String> extrairFrases(String texto) {
@@ -112,7 +112,7 @@ public class AnaliseTextoService {
         List<String> palavrasSemStopWords = palavras.stream()
                 .map(String::toLowerCase)
                 .filter(p -> !STOP_WORDS.contains(p))
-                .collect(Collectors.toList());
+                .toList();
 
         List<String> frases = new ArrayList<>();
 
@@ -120,12 +120,10 @@ public class AnaliseTextoService {
             return frases;
         }
 
-        // 2-word phrases
         for (int i = 0; i < palavrasSemStopWords.size() - 1; i++) {
             frases.add(palavrasSemStopWords.get(i) + " " + palavrasSemStopWords.get(i + 1));
         }
 
-        // 3-word phrases
         if (palavrasSemStopWords.size() >= 3) {
             for (int i = 0; i < palavrasSemStopWords.size() - 2; i++) {
                 frases.add(palavrasSemStopWords.get(i) + " " + palavrasSemStopWords.get(i + 1) + " " + palavrasSemStopWords.get(i + 2));

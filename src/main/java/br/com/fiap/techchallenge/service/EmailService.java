@@ -11,7 +11,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -153,12 +152,10 @@ public class EmailService {
 
             relatorio.getAvaliacoesPorDia().entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
-                    .forEach(entry -> {
-                        distribuicaoDiariaHtml.append(String.format(
-                                "<tr><td style='padding: 8px; border: 1px solid #ddd;'>%s</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>%d</td></tr>",
-                                entry.getKey(), entry.getValue()
-                        ));
-                    });
+                    .forEach(entry -> distribuicaoDiariaHtml.append(String.format(
+                            "<tr><td style='padding: 8px; border: 1px solid #ddd;'>%s</td><td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>%d</td></tr>",
+                            entry.getKey(), entry.getValue()
+                    )));
             distribuicaoDiariaHtml.append("</table>");
         } else {
             distribuicaoDiariaHtml.append("<p>Nenhuma avaliação registrada no período.</p>");
@@ -176,7 +173,7 @@ public class EmailService {
                 .map(f -> "<li>\"" + f + "\"</li>")
                 .collect(Collectors.joining());
 
-        return String.format(new Locale("pt", "BR"), """
+        return String.format("""
         <html>
         <head>
             <style>
