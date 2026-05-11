@@ -1,7 +1,7 @@
 package br.com.fiap.techchallenge.functions;
 
 import br.com.fiap.techchallenge.model.RelatorioSemanal;
-import br.com.fiap.techchallenge.repository.StorageTableRepository;
+import br.com.fiap.techchallenge.repository.RelatorioSemanalRepository;
 import br.com.fiap.techchallenge.service.EmailService;
 import br.com.fiap.techchallenge.service.RelatorioService;
 import com.microsoft.azure.functions.ExecutionContext;
@@ -20,7 +20,7 @@ class RelatorioFunctionTest {
     private RelatorioService relatorioService;
 
     @Mock
-    private StorageTableRepository repository;
+    private RelatorioSemanalRepository repository;
 
     @Mock
     private EmailService emailService;
@@ -39,7 +39,7 @@ class RelatorioFunctionTest {
         relatorioFunction.run("timer-info", context);
 
         verify(relatorioService, times(1)).gerarRelatorioSemanal();
-        verify(repository, times(1)).salvarRelatorio(relatorio);
+        verify(repository, times(1)).salvar(relatorio);
         verify(emailService, times(1)).enviarRelatorioSemanal(relatorio);
     }
 }

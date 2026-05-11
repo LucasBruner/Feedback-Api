@@ -1,7 +1,7 @@
 package br.com.fiap.techchallenge.functions;
 
 import br.com.fiap.techchallenge.model.Avaliacao;
-import br.com.fiap.techchallenge.repository.StorageTableRepository;
+import br.com.fiap.techchallenge.repository.AvaliacaoRepository;
 import br.com.fiap.techchallenge.service.EmailService;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.HttpRequestMessage;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class AvaliacaoFunctionTest {
 
     @Mock
-    private StorageTableRepository repository;
+    private AvaliacaoRepository repository;
     @Mock
     private EmailService emailService;
     @Mock
@@ -57,7 +57,7 @@ class AvaliacaoFunctionTest {
         HttpResponseMessage response = avaliacaoFunction.run(request, context);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        verify(repository, times(1)).salvarAvaliacao(any(Avaliacao.class));
+        verify(repository, times(1)).salvar(any(Avaliacao.class));
         verify(emailService, never()).enviarNotificacaoCritica(any(Avaliacao.class));
     }
 
@@ -70,7 +70,7 @@ class AvaliacaoFunctionTest {
         HttpResponseMessage response = avaliacaoFunction.run(request, context);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        verify(repository, times(1)).salvarAvaliacao(any(Avaliacao.class));
+        verify(repository, times(1)).salvar(any(Avaliacao.class));
         verify(emailService, times(1)).enviarNotificacaoCritica(any(Avaliacao.class));
     }
 
@@ -85,6 +85,6 @@ class AvaliacaoFunctionTest {
         HttpResponseMessage response = avaliacaoFunction.run(request, context);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
-        verify(repository, never()).salvarAvaliacao(any(Avaliacao.class));
+        verify(repository, never()).salvar(any(Avaliacao.class));
     }
 }
