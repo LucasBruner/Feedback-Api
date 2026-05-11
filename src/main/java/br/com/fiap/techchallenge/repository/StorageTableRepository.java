@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.LongUnaryOperator;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -151,7 +152,7 @@ public class StorageTableRepository {
         String json = serializarMapaParaJson(
                 avaliacoesPorDia,
                 dia -> dia,
-                String::valueOf
+                valor -> valor
         );
 
         entity.addProperty("avaliacoesPorDia", json);
@@ -171,21 +172,21 @@ public class StorageTableRepository {
         String json = serializarMapaParaJson(
                 mapa,
                 chave -> sanitizarParaJson(Objects.requireNonNullElse(chave, "")),
-                valor -> String.valueOf(Objects.requireNonNullElse(valor, 0L))
+                valor -> valor
         );
 
         entity.addProperty(propriedade, json);
     }
 
-    private <K, V> String serializarMapaParaJson(
-            Map<K, V> mapa,
+    private <K> String serializarMapaParaJson(
+            Map<K, Long> mapa,
             Function<K, String> serializarChave,
-            Function<V, String> serializarValor) {
+            LongUnaryOperator serializarValor) {
 
         String conteudo = mapa.entrySet().stream()
                 .map(entry -> String.format(FORMAT_STRING,
                         serializarChave.apply(entry.getKey()),
-                        serializarValor.apply(entry.getValue())))
+                        serializarValor.applyAsLong(Objects.requireNonNullElse(entry.getValue(), 0L))))
                 .collect(Collectors.joining(","));
 
         return "{" + conteudo + "}";
