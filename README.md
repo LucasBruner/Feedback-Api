@@ -52,6 +52,10 @@ As avaliações são classificadas automaticamente como:
 * **E-mail:** Resend
 * **CI/CD:** GitHub Actions
 
+## Diagrama de Arquitetura
+
+![Diagrama de Arquitetura](documentation/diagram.md)
+
 ---
 
 ## Passo-a-passo do Deploy
