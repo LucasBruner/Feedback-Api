@@ -1,0 +1,79 @@
+{
+  "info": {
+    "_postman_id": "7924b2ea-73d6-4c90-a281-a51af9865005",
+    "name": "Feedback-Api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47549624",
+    "_collection_link": "https://go.postman.co/collection/47549624-7924b2ea-73d6-4c90-a281-a51af9865005?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Registrar Avaliação",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"descricao\": \"Excelente curso, muito didático!\",\n  \"nota\": 8\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/avaliacao",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "avaliacao"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Registrar Avaliação Crítica (nota <= 3)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"descricao\": \"Produto com defeito, péssimo atendimento!\",\n  \"nota\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/avaliacao",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "avaliacao"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
